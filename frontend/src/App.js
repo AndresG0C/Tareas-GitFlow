@@ -5,7 +5,7 @@ function App() {
   const [title, setTitle] = useState("");
 
   const getTasks = () => {
-    fetch("http://localhost:8000/tasks")
+    fetch("http://localhost:8000/tasks/")
       .then((res) => res.json())
       .then((data) => setTasks(data))
       .catch((err) => console.error(err));
@@ -18,7 +18,7 @@ function App() {
   const createTask = () => {
     if (!title) return;
 
-    fetch("http://localhost:8000/tasks", {
+    fetch("http://localhost:8000/tasks/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -29,6 +29,22 @@ function App() {
         setTitle("");
         getTasks();
       })
+      .catch((err) => console.error(err));
+  };
+
+  const deleteTask = (id) => {
+    fetch(`http://localhost:8000/tasks/${id}`, {
+      method: "DELETE",
+    })
+      .then(() => getTasks())
+      .catch((err) => console.error(err));
+  };
+
+  const completeTask = (id) => {
+    fetch(`http://localhost:8000/tasks/${id}/complete`, {
+      method: "PUT",
+    })
+      .then(() => getTasks())
       .catch((err) => console.error(err));
   };
 
@@ -45,7 +61,24 @@ function App() {
 
       <ul>
         {tasks.map((task) => (
-          <li key={task.id}>{task.title}</li>
+          <li key={task.id}>
+            <span
+              style={{
+                textDecoration: task.completed ? "line-through" : "none",
+                marginRight: "10px",
+              }}
+            >
+              {task.title}
+            </span>
+
+            <button onClick={() => completeTask(task.id)}>
+              ✔
+            </button>
+
+            <button onClick={() => deleteTask(task.id)}>
+              🗑
+            </button>
+          </li>
         ))}
       </ul>
     </div>
