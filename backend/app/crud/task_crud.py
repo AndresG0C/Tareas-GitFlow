@@ -10,3 +10,10 @@ def create_task(db: Session, task: schemas.TaskCreate):
 
 def get_tasks(db: Session):
     return db.query(models.Task).all()
+
+def delete_task(db: Session, task_id: int):
+    task = db.get(models.Task, task_id)
+    if task:
+        db.delete(task)
+        db.commit()
+
