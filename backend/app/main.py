@@ -1,7 +1,9 @@
 from fastapi import FastAPI
+from app.api.routes import tasks
+from app.database import Base, engine
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-@app.get("/")
-def root():
-    return {"message": "API funcionando"}
+app.include_router(tasks.router)
