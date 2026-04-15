@@ -1,23 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
 
 function App() {
+  const [tasks, setTasks] = useState([]);
+  const [title, setTitle] = useState("");
+
+  const getTasks = () => {
+    fetch("http://localhost:8000/tasks")
+      .then((res) => res.json())
+      .then((data) => setTasks(data))
+      .catch((err) => console.error(err));
+  };
+
+  useEffect(() => {
+    getTasks();
+  }, []);
+
+  const createTask = () => {
+    if (!title) return;
+
+    fetch("http://localhost:8000/tasks", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title }),
+    })
+      .then(() => {
+        setTitle("");
+        getTasks();
+      })
+      .catch((err) => console.error(err));
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ padding: "20px" }}>
+      <h1>Lista de tareas</h1>
+
+      <input
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Nueva tarea"
+      />
+      <button onClick={createTask}>Agregar</button>
+
+      <ul>
+        {tasks.map((task) => (
+          <li key={task.id}>{task.title}</li>
+        ))}
+      </ul>
     </div>
   );
 }
