@@ -17,3 +17,10 @@ def delete_task(db: Session, task_id: int):
         db.delete(task)
         db.commit()
 
+def complete_task(db: Session, task_id: int):
+    task = db.get(models.Task, task_id)
+    if task:
+        task.completed = True
+        db.commit()
+        db.refresh(task)
+    return task
