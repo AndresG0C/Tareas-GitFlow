@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "./App.css";
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -35,49 +36,39 @@ function App() {
   const deleteTask = (id) => {
     fetch(`http://localhost:8000/tasks/${id}`, {
       method: "DELETE",
-    })
-      .then(() => getTasks())
-      .catch((err) => console.error(err));
+    }).then(() => getTasks());
   };
 
   const completeTask = (id) => {
     fetch(`http://localhost:8000/tasks/${id}/complete`, {
       method: "PUT",
-    })
-      .then(() => getTasks())
-      .catch((err) => console.error(err));
+    }).then(() => getTasks());
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Lista de tareas</h1>
+    <div className="container">
+      <h1>📝 Lista de tareas</h1>
 
-      <input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Nueva tarea"
-      />
-      <button onClick={createTask}>Agregar</button>
+      <div className="input-group">
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Nueva tarea..."
+        />
+        <button onClick={createTask}>Agregar</button>
+      </div>
 
-      <ul>
+      <ul className="task-list">
         {tasks.map((task) => (
-          <li key={task.id}>
-            <span
-              style={{
-                textDecoration: task.completed ? "line-through" : "none",
-                marginRight: "10px",
-              }}
-            >
+          <li key={task.id} className="task-item">
+            <span className={task.completed ? "completed" : ""}>
               {task.title}
             </span>
 
-            <button onClick={() => completeTask(task.id)}>
-              ✔
-            </button>
-
-            <button onClick={() => deleteTask(task.id)}>
-              🗑
-            </button>
+            <div className="actions">
+              <button onClick={() => completeTask(task.id)}>✔</button>
+              <button onClick={() => deleteTask(task.id)}>🗑</button>
+            </div>
           </li>
         ))}
       </ul>
