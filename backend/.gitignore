@@ -1,0 +1,22 @@
+# 🐍 Entorno virtual
+venv/
+
+# 🧠 Archivos compilados de Python
+__pycache__/
+*.pyc
+
+# 🗃 Base de datos local
+test.db
+
+# ⚙️ Variables de entorno
+.env
+
+# 🧾 Logs (por si luego usas)
+*.log
+
+# 🐳 Docker (opcional)
+*.env
+
+# 🧪 Archivos temporales del sistema
+.DS_Store
+Thumbs.db
