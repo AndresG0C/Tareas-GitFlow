@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import { API_URL } from "./config";
 
 function App() {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
 
   const getTasks = () => {
-    fetch("http://localhost:8000/tasks/")
+    fetch(`${API_URL}/tasks/`)
       .then((res) => res.json())
       .then((data) => setTasks(data))
       .catch((err) => console.error(err));
@@ -17,9 +18,9 @@ function App() {
   }, []);
 
   const createTask = () => {
-    if (!title) return;
+    if (!title.trim()) return;
 
-    fetch("http://localhost:8000/tasks/", {
+    fetch(`${API_URL}/tasks/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -34,15 +35,19 @@ function App() {
   };
 
   const deleteTask = (id) => {
-    fetch(`http://localhost:8000/tasks/${id}`, {
+    fetch(`${API_URL}/tasks/${id}`, {
       method: "DELETE",
-    }).then(() => getTasks());
+    })
+      .then(() => getTasks())
+      .catch((err) => console.error(err));
   };
 
   const completeTask = (id) => {
-    fetch(`http://localhost:8000/tasks/${id}/complete`, {
+    fetch(`${API_URL}/tasks/${id}/complete`, {
       method: "PUT",
-    }).then(() => getTasks());
+    })
+      .then(() => getTasks())
+      .catch((err) => console.error(err));
   };
 
   return (
@@ -53,6 +58,7 @@ function App() {
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && createTask()}
           placeholder="Nueva tarea..."
         />
         <button onClick={createTask}>Agregar</button>
