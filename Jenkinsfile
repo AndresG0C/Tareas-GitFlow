@@ -5,6 +5,11 @@ pipeline {
         nodejs 'node-18'
     }
     
+    environment {
+        // Limpiar variable de OpenSSL que causa conflicto
+        OPENSSL_CONF = ''
+    }
+    
     stages {
         stage('Checkout') {
             steps {
@@ -16,6 +21,8 @@ pipeline {
             steps {
                 dir('backend-node') {
                     bat '''
+                        set OPENSSL_CONF=
+                        echo "OpenSSL_CONF is now empty"
                         npm install
                         npm run build
                         npm test
