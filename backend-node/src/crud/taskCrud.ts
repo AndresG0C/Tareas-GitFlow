@@ -45,3 +45,23 @@ export const completeTask = async (taskId: number): Promise<Task | null> => {
     await taskRepository.save(task);
     return task;
 };
+
+// EXTRA: Desmarcar tarea (para tener operación inversa)
+export const uncompleteTask = async (taskId: number): Promise<Task | null> => {
+    const task = await taskRepository.findOneBy({ id: taskId });
+    if (!task) return null;
+
+    task.completed = false;
+    await taskRepository.save(task);
+    return task;
+};
+
+// EXTRA: Alternar estado (toggle)
+export const toggleTask = async (taskId: number): Promise<Task | null> => {
+    const task = await taskRepository.findOneBy({ id: taskId });
+    if (!task) return null;
+
+    task.completed = !task.completed;
+    await taskRepository.save(task);
+    return task;
+};
