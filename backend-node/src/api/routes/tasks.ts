@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
-import { createTask, getTasks, getTaskById, deleteTask, completeTask, toggleTask } from "../../../crud/taskCrud";
-import { CreateTaskDto } from "../../../schemas/taskSchemas";
+import { createTask, getTasks, getTaskById, deleteTask, completeTask, toggleTask } from "../../crud/taskCrud";
+import { CreateTaskDto } from "../../schemas/taskSchemas";
 
 const router = Router();
 
