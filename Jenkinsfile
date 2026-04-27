@@ -1,9 +1,8 @@
 pipeline {
     agent any
     
-    // ✅ IMPORTANTE: Configurar NodeJS
     tools {
-        nodejs 'node-18'  // Usa el nombre que pusiste en Jenkins
+        nodejs 'node-18'
     }
     
     environment {
@@ -13,23 +12,33 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo '📥 Descargando código...'
                 checkout scm
             }
         }
         
         stage('Install Dependencies') {
             steps {
-                echo '📦 Instalando dependencias...'
                 dir("${BACKEND_DIR}") {
-                    sh 'npm install'
+                    sh '''
+                        echo "📦 Node version:"
+                        node --version
+                        npm --version
+                        
+                        echo "📦 Installing all dependencies (including dev)..."
+                        npm ci --include=dev || npm install --include=dev
+                        
+                        echo "📦 Verifying ts-jest installation:"
+                        npm list ts-jest || npm install --save-dev ts-jest jest @types/jest supertest @types/supertest
+                        
+                        echo "📦 Installed packages:"
+                        npm list --depth=0
+                    '''
                 }
             }
         }
         
         stage('Build TypeScript') {
             steps {
-                echo '🔨 Compilando TypeScript...'
                 dir("${BACKEND_DIR}") {
                     sh 'npm run build'
                 }
@@ -38,32 +47,34 @@ pipeline {
         
         stage('Run Tests') {
             steps {
-                echo '🧪 Ejecutando tests...'
                 dir("${BACKEND_DIR}") {
-                    sh 'npm test'
+                    sh '''
+                        echo "🧪 Jest version:"
+                        npx jest --version
+                        
+                        echo "🧪 Running tests..."
+                        npm test
+                    '''
                 }
             }
         }
         
-        stage('Build Docker Images') {
+        stage('Success') {
             steps {
-                echo '🐳 Construyendo imágenes Docker...'
-                sh "docker build -t task-backend:latest ./${BACKEND_DIR}"
-                sh "docker build -t task-frontend:latest ./frontend"
+                echo '✅ Pipeline completado exitosamente!'
             }
         }
     }
     
     post {
+        always {
+            echo '🏁 Pipeline finalizado'
+        }
         success {
-            echo '✅ ✅ ✅ PIPELINE EXITOSO ✅ ✅ ✅'
+            echo '✅ ✅ ✅ TODO OK ✅ ✅ ✅'
         }
         failure {
             echo '❌ ❌ ❌ PIPELINE FALLÓ ❌ ❌ ❌'
-        }
-        always {
-            echo '🏁 Pipeline finalizado'
-            sh 'docker system prune -f || true'
         }
     }
 }
