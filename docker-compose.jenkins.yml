@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins_server
+    restart: always
+    ports:
+      - "8080:8080" # Interfaz web de Jenkins
+      - "50000:50000" # Para agentes
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    privileged: true
+
+volumes:
+  jenkins_home:
