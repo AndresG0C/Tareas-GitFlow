@@ -35,3 +35,13 @@ export const deleteTask = async (taskId: number): Promise<boolean> => {
     await taskRepository.remove(task);
     return true;
 };
+
+// UPDATE: Completar una tarea
+export const completeTask = async (taskId: number): Promise<Task | null> => {
+    const task = await taskRepository.findOneBy({ id: taskId });
+    if (!task) return null;
+
+    task.completed = true;
+    await taskRepository.save(task);
+    return task;
+};
