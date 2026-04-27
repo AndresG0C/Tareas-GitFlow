@@ -46,6 +46,9 @@ export const completeTask = async (taskId: number): Promise<Task | null> => {
     return task;
 };
 
+// NOTA: Estos endpoints extras no estaban en el backend original
+// Se agregaron como mejora potencial pero NO afectan la API original
+
 // EXTRA: Desmarcar tarea (para tener operación inversa)
 export const uncompleteTask = async (taskId: number): Promise<Task | null> => {
     const task = await taskRepository.findOneBy({ id: taskId });
