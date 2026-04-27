@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { Task } from "../entities/Task";
+import { Task } from "../entities/Tasks";
 import dotenv from "dotenv";
 import path from "path";
 
