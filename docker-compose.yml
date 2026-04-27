@@ -17,8 +17,8 @@ services:
       retries: 5
 
   backend:
-    build: ./backend
-    container_name: fastapi_backend
+    build: ./backend-node
+    container_name: nodejs_backend
     ports:
       - "8000:8000"
     depends_on:
