@@ -13,6 +13,7 @@ const startServer = async () => {
         // Iniciar servidor
         app.listen(PORT, () => {
             console.log(`🚀 Server running on http://localhost:${PORT}`);
+            console.log(`🚀 Swagger Doc: http://localhost:${PORT}`);
             console.log(`📝 Tasks API: http://localhost:${PORT}/tasks`);
             console.log(`✅ Health check: http://localhost:${PORT}/health`);
         });
