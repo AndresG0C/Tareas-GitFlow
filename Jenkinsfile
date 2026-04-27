@@ -1,9 +1,8 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:18-alpine'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
+    agent any
+    
+    tools {
+        nodejs 'node-18'
     }
     
     stages {
@@ -13,40 +12,26 @@ pipeline {
             }
         }
         
-        stage('Install Dependencies') {
+        stage('Install & Build') {
             steps {
                 dir('backend-node') {
-                    sh '''
-                        node --version
-                        npm --version
+                    bat '''
                         npm install
-                        npm install --save-dev ts-jest
+                        npm run build
+                        npm test
                     '''
                 }
             }
         }
         
-        stage('Build') {
+        stage('Success') {
             steps {
-                dir('backend-node') {
-                    sh 'npm run build'
-                }
-            }
-        }
-        
-        stage('Test') {
-            steps {
-                dir('backend-node') {
-                    sh 'npm test'
-                }
+                echo '✅ Pipeline exitoso!'
             }
         }
     }
     
     post {
-        success {
-            echo '✅ Pipeline exitoso!'
-        }
         failure {
             echo '❌ Pipeline falló'
         }
