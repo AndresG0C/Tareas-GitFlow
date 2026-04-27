@@ -1,12 +1,9 @@
 pipeline {
-    agent any
-    
-    tools {
-        nodejs 'node-18'
-    }
-    
-    environment {
-        BACKEND_DIR = 'backend-node'
+    agent {
+        docker {
+            image 'node:18-alpine'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
     }
     
     stages {
@@ -18,63 +15,40 @@ pipeline {
         
         stage('Install Dependencies') {
             steps {
-                dir("${BACKEND_DIR}") {
+                dir('backend-node') {
                     sh '''
-                        echo "📦 Node version:"
                         node --version
                         npm --version
-                        
-                        echo "📦 Installing all dependencies (including dev)..."
-                        npm ci --include=dev || npm install --include=dev
-                        
-                        echo "📦 Verifying ts-jest installation:"
-                        npm list ts-jest || npm install --save-dev ts-jest jest @types/jest supertest @types/supertest
-                        
-                        echo "📦 Installed packages:"
-                        npm list --depth=0
+                        npm install
+                        npm install --save-dev ts-jest
                     '''
                 }
             }
         }
         
-        stage('Build TypeScript') {
+        stage('Build') {
             steps {
-                dir("${BACKEND_DIR}") {
+                dir('backend-node') {
                     sh 'npm run build'
                 }
             }
         }
         
-        stage('Run Tests') {
+        stage('Test') {
             steps {
-                dir("${BACKEND_DIR}") {
-                    sh '''
-                        echo "🧪 Jest version:"
-                        npx jest --version
-                        
-                        echo "🧪 Running tests..."
-                        npm test
-                    '''
+                dir('backend-node') {
+                    sh 'npm test'
                 }
-            }
-        }
-        
-        stage('Success') {
-            steps {
-                echo '✅ Pipeline completado exitosamente!'
             }
         }
     }
     
     post {
-        always {
-            echo '🏁 Pipeline finalizado'
-        }
         success {
-            echo '✅ ✅ ✅ TODO OK ✅ ✅ ✅'
+            echo '✅ Pipeline exitoso!'
         }
         failure {
-            echo '❌ ❌ ❌ PIPELINE FALLÓ ❌ ❌ ❌'
+            echo '❌ Pipeline falló'
         }
     }
 }
